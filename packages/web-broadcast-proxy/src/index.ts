@@ -1,9 +1,13 @@
-import { BroadcastAPIOptions, IBroadcastAPI, MessageData, WebBroadcast } from './broadcast'
+import WebBroadcast, {
+  BroadcastAPIOptions,
+  IBroadcastAPI,
+  MessageData,
+} from '@kazura/web-broadcast'
 import WebPostMsg from '@kazura/web-postmsg'
 import PostMsgBuilder from '@kazura/postmsg-builder'
 
 export interface BroadcastProxyData<T = any> extends MessageData<T> {
-  proxy?: any
+  proxy?: { referer: string }
 }
 
 export type Listener = (resources: any, event: MessageEvent<BroadcastProxyData>) => void
@@ -17,7 +21,7 @@ export interface BroadcastProxyAPIOptions extends BroadcastAPIOptions {
   proxy: string
 }
 
-export class WebBroadcastProxy extends WebBroadcast implements IBroadcastProxyAPI {
+export default class WebBroadcastProxy extends WebBroadcast implements IBroadcastProxyAPI {
   public postmsg: WebPostMsg
 
   public constructor(options: BroadcastProxyAPIOptions) {
@@ -64,3 +68,5 @@ export class WebBroadcastProxy extends WebBroadcast implements IBroadcastProxyAP
     super.off(type, listener)
   }
 }
+
+// const a: WebBroadcast = new WebBroadcastProxy({ proxy: '' })

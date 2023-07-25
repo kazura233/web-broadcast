@@ -30,7 +30,7 @@ export interface BroadcastAPIOptions {
   channel?: string
 }
 
-export class WebBroadcast implements IBroadcastAPI {
+export default class WebBroadcast implements IBroadcastAPI {
   /**
    * 消息标签
    */

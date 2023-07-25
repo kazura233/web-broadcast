@@ -1,7 +1,7 @@
-/node_modules
+node_modules
 pnpm-lock.yaml
-/dist
-/lib
-/es
-/types
-/iife
+dist
+lib
+es
+types
+iife
