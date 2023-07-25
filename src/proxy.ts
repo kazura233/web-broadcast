@@ -37,35 +37,30 @@ export class WebBroadcastProxy extends WebBroadcast implements IBroadcastProxyAP
     return iframe
   }
 
-  public override postPublicMessage(type: string, resources: any) {
-    const message = this.generateMessage(type, resources)
-    this.publicBroadcast.postMessage(message)
-
+  public postPublicMessage(type: string, resources: any): BroadcastProxyData {
+    const message = super.postPublicMessage(type, resources)
     this.postmsg.emit('broadcast-proxy__postPublicMessage', message)
+    return message
   }
 
-  public override postPrivateMessage(type: string, resources: any, to: string) {
-    let broadcast = this.broadcastPool.get(to)
-    if (!broadcast) broadcast = new BroadcastChannel(to)
-
-    const message = this.generateMessage(type, resources, to)
-    broadcast.postMessage(message)
-
+  public postPrivateMessage(type: string, resources: any, to: string): BroadcastProxyData {
+    const message = super.postPrivateMessage(type, resources, to)
     this.postmsg.emit('broadcast-proxy__postPrivateMessage', message)
+    return message
   }
 
   public override generateMessage(type: string, resources: any, to?: string): BroadcastProxyData {
     return {
       ...super.generateMessage(type, resources, to),
-      proxy: {},
+      proxy: { referer: window.location.href },
     }
   }
 
-  public override on(type: string, listener: Listener) {
+  public on(type: string, listener: Listener) {
     super.on(type, listener)
   }
 
-  public override off(type: string, listener?: Listener) {
+  public off(type: string, listener?: Listener) {
     super.off(type, listener)
   }
 }

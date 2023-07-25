@@ -108,6 +108,8 @@ export class WebBroadcast implements IBroadcastAPI {
   public postPublicMessage(type: string, resources: any) {
     const message = this.generateMessage(type, resources)
     this.publicBroadcast.postMessage(message)
+
+    return message
   }
 
   /**
@@ -116,10 +118,15 @@ export class WebBroadcast implements IBroadcastAPI {
    */
   public postPrivateMessage(type: string, resources: any, to: string) {
     let broadcast = this.broadcastPool.get(to)
-    if (!broadcast) broadcast = new BroadcastChannel(to)
+    if (!broadcast) {
+      broadcast = new BroadcastChannel(to)
+      this.broadcastPool.set(to, broadcast)
+    }
 
     const message = this.generateMessage(type, resources, to)
     broadcast.postMessage(message)
+
+    return message
   }
 
   /**
