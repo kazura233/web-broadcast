@@ -15,7 +15,7 @@
 ## Install
 
 ```sh
-yarn add @kazura/web-broadcast
+pnpm i @kazura/web-broadcast
 ```
 
 ## Usage

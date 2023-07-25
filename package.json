@@ -23,14 +23,13 @@
     "types"
   ],
   "scripts": {
-    "clean": "rimraf dist lib es types",
+    "clean": "rimraf dist lib es types iife",
     "build": "rollup --config rollup.config.ts --configPlugin @rollup/plugin-typescript"
-  },
-  "peerDependencies": {
-    "@kazura/web-util": "^0.0.1-alpha.5"
   },
   "dependencies": {
     "@babel/runtime": "^7.20.7",
+    "@kazura/postmsg-builder": "1.0.0",
+    "@kazura/web-postmsg": "1.0.0",
     "@kazura/web-util": "^0.0.1-alpha.5"
   },
   "devDependencies": {
