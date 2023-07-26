@@ -120,4 +120,55 @@ export default defineConfig([
       terser(),
     ],
   },
+  // IIFE Development
+  {
+    input: 'src/proxy-iife.ts',
+    output: {
+      file: 'iife/web-broadcast-proxy-iife.js',
+      format: 'iife',
+      indent: false,
+    },
+    plugins: [
+      json(),
+      resolve({ extensions }),
+      typescript({ tsconfigOverride: noDeclarationFiles }),
+      babel({
+        extensions,
+        plugins: [['@babel/plugin-transform-runtime', { version: babelRuntimeVersion }]],
+        babelHelpers: 'runtime',
+        exclude: 'node_modules/**',
+      }),
+      commonjs(),
+      replace({
+        'process.env.NODE_ENV': JSON.stringify('development'),
+        preventAssignment: true,
+      }),
+    ],
+  },
+  // IIFE Production
+  {
+    input: 'src/proxy-iife.ts',
+    output: {
+      file: 'iife/web-broadcast-proxy-iife.min.js',
+      format: 'iife',
+      indent: false,
+    },
+    plugins: [
+      json(),
+      resolve({ extensions }),
+      typescript({ tsconfigOverride: noDeclarationFiles }),
+      babel({
+        extensions,
+        plugins: [['@babel/plugin-transform-runtime', { version: babelRuntimeVersion }]],
+        babelHelpers: 'runtime',
+        exclude: 'node_modules/**',
+      }),
+      commonjs(),
+      replace({
+        'process.env.NODE_ENV': JSON.stringify('production'),
+        preventAssignment: true,
+      }),
+      terser(),
+    ],
+  },
 ])

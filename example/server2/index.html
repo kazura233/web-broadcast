@@ -19,6 +19,7 @@
 <script>
   const broadcast = new WebBroadcast({
     listenSelf: true,
+    proxy: 'http://127.0.0.1:8181/proxy.html',
   })
 
   window.__broadcast = broadcast

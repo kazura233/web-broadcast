@@ -1,3 +1,4 @@
-/node_modules
+node_modules
 pnpm-lock.yaml
-/server/web-broadcast.js
+web-broadcast.js
+web-broadcast-proxy-iife.js

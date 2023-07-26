@@ -5,24 +5,24 @@ fs.copyFileSync('../packages/web-broadcast/dist/web-broadcast.js', './server1/we
 fs.copyFileSync('../packages/web-broadcast/dist/web-broadcast.js', './server2/web-broadcast.js')
 
 fs.copyFileSync(
-  '../packages/web-broadcast-proxy/dist/web-broadcast-proxy.js',
-  './server1/web-broadcast-proxy.js'
+  '../packages/web-broadcast/iife/web-broadcast-proxy-iife.js',
+  './server1/web-broadcast-proxy-iife.js'
 )
 fs.copyFileSync(
-  '../packages/web-broadcast-proxy/dist/web-broadcast-proxy.js',
-  './server2/web-broadcast-proxy.js'
+  '../packages/web-broadcast/iife/web-broadcast-proxy-iife.js',
+  './server2/web-broadcast-proxy-iife.js'
 )
 
 server.start({
   port: 8181,
   host: '0.0.0.0',
-  root: './server',
+  root: './server1',
   file: 'index.html',
 })
 
 server.start({
   port: 8182,
   host: '0.0.0.0',
-  root: './server',
+  root: './server2',
   file: 'index.html',
 })

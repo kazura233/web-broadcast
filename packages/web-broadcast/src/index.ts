@@ -1,4 +1,5 @@
 import { random } from '@kazura/web-util'
+import { ProxyMeta, IProxy, BroadcastProxy } from './broadcast-proxy'
 
 export interface MessageData<T = any> {
   tag: typeof WebBroadcast.MESSAGE_TAG
@@ -7,6 +8,7 @@ export interface MessageData<T = any> {
   receiver: string
   sender: string
   uuid: string
+  proxy?: ProxyMeta
 }
 
 export type Listener = (resources: any, event: MessageEvent<MessageData>) => void
@@ -28,6 +30,7 @@ export interface BroadcastAPIOptions {
   listeners?: Map<string, Listener[]>
   listenSelf?: boolean
   channel?: string
+  proxy?: string | string[]
 }
 
 export default class WebBroadcast implements IBroadcastAPI {
@@ -44,7 +47,7 @@ export default class WebBroadcast implements IBroadcastAPI {
   /**
    * 唯一序号
    */
-  public readonly uuid: string = this.generateUUID()
+  public readonly uuid: string = WebBroadcast.generateUUID()
 
   /**
    * 公有渠道的名称
@@ -81,6 +84,8 @@ export default class WebBroadcast implements IBroadcastAPI {
    */
   private listeners: Map<string, Listener[]> = new Map()
 
+  public proxy?: IProxy
+
   public constructor(options?: BroadcastAPIOptions) {
     if (!options) options = {}
 
@@ -99,6 +104,11 @@ export default class WebBroadcast implements IBroadcastAPI {
       this.fissionBroadcast = new BroadcastChannel(this.PUBLIC_CHANNEL)
       this.fissionBroadcast.addEventListener('message', this.fissionHandler)
     }
+
+    // 初始化代理
+    if (options.proxy) {
+      this.proxy = new BroadcastProxy(options.proxy)
+    }
   }
 
   /**
@@ -108,6 +118,10 @@ export default class WebBroadcast implements IBroadcastAPI {
   public postPublicMessage(type: string, resources: any) {
     const message = this.generateMessage(type, resources)
     this.publicBroadcast.postMessage(message)
+
+    if (this.proxy) {
+      this.proxy.postMessage(message.receiver, message)
+    }
 
     return message
   }
@@ -126,6 +140,10 @@ export default class WebBroadcast implements IBroadcastAPI {
     const message = this.generateMessage(type, resources, to)
     broadcast.postMessage(message)
 
+    if (this.proxy) {
+      this.proxy.postMessage(message.receiver, message)
+    }
+
     return message
   }
 
@@ -133,8 +151,12 @@ export default class WebBroadcast implements IBroadcastAPI {
    * 生成一个随机的id
    * @returns
    */
-  public generateUUID() {
+  public static generateUUID() {
     return '' + random(10000, 99999) + new Date().getTime()
+  }
+
+  public generateUUID() {
+    return WebBroadcast.generateUUID()
   }
 
   /**
@@ -151,7 +173,8 @@ export default class WebBroadcast implements IBroadcastAPI {
       resources,
       receiver: to ?? this.PUBLIC_CHANNEL,
       sender: this.PRIVATE_CHANNEL,
-      uuid: this.generateUUID(),
+      uuid: WebBroadcast.generateUUID(),
+      proxy: this.proxy?.meta(),
     }
   }
 
@@ -225,5 +248,6 @@ export default class WebBroadcast implements IBroadcastAPI {
     this.privateBroadcast.close()
     this.fissionBroadcast?.close()
     this.broadcastPool.forEach((_) => _.close())
+    this.proxy?.destroy()
   }
 }
